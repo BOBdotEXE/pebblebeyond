@@ -1,0 +1,68 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "bobdotexe@gmail.com",
+    "longName": "Pebble Batman Beyond",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/hour_bg_bw.png",
+                "name": "hour_changed_bg",
+                "type": "png"
+            },
+            {
+                "file": "images/icon_bw.png",
+                "menuIcon": true,
+                "name": "icon",
+                "type": "png"
+            },
+            {
+                "characterRegex": "[0-9%]",
+                "file": "fonts/ninepin.ttf",
+                "name": "FONT_battery_18",
+                "type": "font"
+            },
+            {
+                "characterRegex": "[0-9:]",
+                "file": "fonts/cayetano.round-bold.ttf",
+                "name": "FONT_time_48",
+                "type": "font"
+            },
+            {
+                "characterRegex": "[0-9:A-Za-z ]",
+                "file": "fonts/batmfo__.ttf",
+                "name": "FONT_date_24",
+                "type": "font"
+            },
+            {
+                "file": "images/glitch_bw.png",
+                "name": "glitch_bw",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/glitch_frame.png",
+                "name": "glitch_color",
+                "type": "png"
+            },
+            {
+                "file": "images/bg_processed+bw.png",
+                "name": "bg",
+                "type": "png"
+            }
+        ]
+    },
+    "sdkVersion": "3",
+    "shortName": "Pebble Beyond",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
+    "uuid": "35081695-7d36-430e-8a25-71b27b4dec98",
+    "versionLabel": "1.01",
+    "watchapp": {
+        "watchface": true
+    }
+}
