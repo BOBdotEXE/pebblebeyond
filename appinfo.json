@@ -1,9 +1,19 @@
 {
-    "appKeys": {},
+    "appKeys": {
+        "fast": 1,
+        "flash": 7,
+        "long": 6,
+        "med": 2,
+        "norm": 5,
+        "short": 4,
+        "slow": 3,
+        "vib": 0
+    },
     "capabilities": [
-        ""
+        "configurable"
     ],
-    "companyName": "bobdotexe@gmail.com",
+    "companyName": "BOBdotEXE",
+    "enableMultiJS": false,
     "longName": "Pebble Batman Beyond",
     "projectType": "native",
     "resources": {
@@ -11,13 +21,23 @@
             {
                 "file": "images/hour_bg_bw.png",
                 "name": "hour_changed_bg",
-                "type": "png"
+                "type": "bitmap"
             },
             {
                 "file": "images/icon_bw.png",
                 "menuIcon": true,
                 "name": "icon",
-                "type": "png"
+                "type": "bitmap"
+            },
+            {
+                "file": "images/glitch_frame.png",
+                "name": "glitch_color",
+                "type": "bitmap"
+            },
+            {
+                "file": "images/bg_processed+bw.png",
+                "name": "bg",
+                "type": "bitmap"
             },
             {
                 "characterRegex": "[0-9%]",
@@ -41,16 +61,6 @@
                 "file": "images/glitch_bw.png",
                 "name": "glitch_bw",
                 "type": "png-trans"
-            },
-            {
-                "file": "images/glitch_frame.png",
-                "name": "glitch_color",
-                "type": "png"
-            },
-            {
-                "file": "images/bg_processed+bw.png",
-                "name": "bg",
-                "type": "png"
             }
         ]
     },

@@ -1,5 +1,12 @@
 #include <pebble.h>
-  
+#define KEY_vib 0
+#define KEY_fast 1
+#define KEY_med 2
+#define KEY_slow 3
+#define KEY_short 4
+#define KEY_norm 5
+#define KEY_long 6
+#define KEY_flash 7  
 static Window *s_main_window;
 static TextLayer *s_time_layer;
 static TextLayer *s_battery_layer; //text layer for battery percentage
@@ -13,10 +20,13 @@ int fade_sec =0; //set time since last fade to 0
 int frame=0;
 int f_delay =150;
 int g_interval =18; //glitces every 'g_interval' seconds
-bool vib_hour =true;
+bool vib_hour =false;
 int last_hour =24; //that's not possible!
 bool batflash =true;
 bool wasDisconnected =false; //previouly disconnected? 
+bool fast,med,slow,vib, b_short, norm,b_long,flash; 
+
+
 static void update_time() {
   // Get a tm structure
   time_t temp = time(NULL); 
@@ -63,6 +73,78 @@ static void update_time() {
   snprintf(s_battery_buffer, sizeof(s_battery_buffer), "%d%%", new_state.charge_percent); //get he battery info, and add the approprate text
   text_layer_set_text(s_battery_layer, s_battery_buffer); //set the layer battery text (percent + text) to the battery layer
   }
+
+
+
+
+static void inbox_received_handler(DictionaryIterator *iter, void *context) {
+  Tuple *fast_t = dict_find(iter, KEY_fast);
+  Tuple *med_t = dict_find(iter, KEY_med);
+  Tuple *slow_t = dict_find(iter, KEY_slow);
+  Tuple *vib_t = dict_find(iter, KEY_vib);
+  Tuple *short_t = dict_find(iter, KEY_short);
+  Tuple *norm_t = dict_find(iter, KEY_norm);
+  Tuple *long_t = dict_find(iter, KEY_long);
+  Tuple *flash_t = dict_find(iter, KEY_flash);
+  
+  if (fast_t) {
+   fast = fast_t->value->int32;
+    persist_write_int(KEY_fast, fast);
+      g_interval=8;
+  }
+  
+    if (med_t) {
+   med = med_t->value->int32;
+    persist_write_int(KEY_med, med);
+      g_interval=16;
+  }
+  
+  if (slow_t) {
+    slow = slow_t->value->int32;
+    persist_write_int(KEY_slow, slow);
+    g_interval=60;
+  }
+    
+  if (vib_t) {
+    vib = vib_t->value->int32;
+    if (vib == true){
+      vib_hour=true;
+      vibes_short_pulse();
+    }    
+  }
+                                      
+
+
+  
+  if (short_t) {
+   b_short = short_t->value->int32;
+    persist_write_int(KEY_short, b_short);
+      f_delay=80;
+  }
+  
+    if (norm_t) {
+   norm = norm_t->value->int32;
+    persist_write_int(KEY_norm, norm);
+      f_delay=150;
+  }
+  
+  if (long_t) {
+    b_long = long_t->value->int32;
+    persist_write_int(KEY_long, b_long);
+    f_delay=225;
+  }
+                             
+  if (flash_t) {
+    flash = flash_t->value->int32;
+    if (flash == false){
+      batflash=false;
+    }
+  }
+}
+
+
+
+
 
 
 static void main_window_load(Window *window) {
@@ -204,8 +286,60 @@ static void main_window_load(Window *window) {
   
   // Make sure the time is displayed from the start
   update_time();
-}
 
+
+   if (persist_read_int(KEY_fast)) {
+    bool go_fast= persist_read_int(KEY_fast);
+     if (go_fast== true)
+      g_interval=8;
+   }
+  
+     if (persist_read_int(KEY_med)) {
+    bool go_med= persist_read_int(KEY_med);
+     if (go_med== true)
+      g_interval=16;
+   }
+  
+  if (persist_read_int(KEY_slow)) {
+    bool go_slow= persist_read_int(KEY_slow);
+    if (go_slow== true)
+      f_delay=60; 
+  }
+  
+  if (persist_read_int(KEY_vib)) {
+    bool vib= persist_read_int(KEY_vib);
+    if (vib == true){
+      vib_hour=true;
+    vibes_short_pulse();}
+  }
+    
+    
+     if (persist_read_int(KEY_short)) {
+    bool go_short= persist_read_int(KEY_short);
+     if (go_short== true)
+      f_delay=80;
+   }
+  
+     if (persist_read_int(KEY_norm)) {
+    bool go_norm= persist_read_int(KEY_norm);
+     if (go_norm== true)
+      f_delay=150;
+   }
+  
+  if (persist_read_int(KEY_long)) {
+    bool go_long= persist_read_int(KEY_long);
+    if (go_long== true)
+      f_delay=225;
+  }
+  
+  if (persist_read_int(KEY_flash)) {
+    bool flash= persist_read_int(KEY_flash);
+    if (flash == true){
+      batflash=true; 
+    }
+  }
+}
+    
 static void main_window_unload(Window *window) {
   //Unload GFont
   fonts_unload_custom_font(s_time_font);
@@ -276,7 +410,7 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     if (bluetooth_connection_service_peek() ==false && wasDisconnected==false){ //if we WERE connected, and now are not, then do the following
     layer_set_hidden( (Layer *) s_disconnect_layer,false);  //show it on the screen
     wasDisconnected = true; //at last check, we WERE disconnected, 
-    vibes_double_pulse(); //double vibrate, so they will know it's not a normal notication.
+    //vibes_double_pulse(); //double vibrate, so they will know it's not a normal notication.
     }
   
    if (bluetooth_connection_service_peek() ==true && wasDisconnected ==true){ //if we WERE DISconnected (last we checked), and now are connected again, then do the following
@@ -311,7 +445,12 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
         vibes_short_pulse(); //vibrate (short) 
         last_hour=hours;//our new 'last hour' will be the current time   
       }
+   
 
+    if (hours != last_hour && vib_hour ==false) //if hour has changed
+     {
+        last_hour=hours;//our new 'last hour' will be the current time   
+      }
   
    // if (min == 59 && seconds == 59)
      // app_timer_register(500, glitch_hour_ani, NULL); //start the hour glitch
@@ -346,7 +485,8 @@ static void init() {
   
   // Register with TickTimerService
   tick_timer_service_subscribe(SECOND_UNIT, (TickHandler) tick_handler);
-  
+   app_message_register_inbox_received(inbox_received_handler);
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
 }
 
 
@@ -359,4 +499,6 @@ int main(void) {
   init();
   app_event_loop();
   deinit();
+   app_message_register_inbox_received(inbox_received_handler);
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
 }
