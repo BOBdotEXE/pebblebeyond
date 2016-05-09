@@ -152,13 +152,13 @@ static void main_window_load(Window *window) {
   GRect window_bounds = layer_get_bounds(window_layer);
   
     //Create GFont for clock| Font:Tonik BRK Font [by Blambot Comic]
-  s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_time_48));
+ GFont s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_time_48));
   
   //create font for date/dow  |Font: Flipside BRK Font [by Ænigma Fonts]
-  s_date_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_date_24));
+  GFont s_date_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_date_24));
   
   //create font for Battery |Font: NinePin Font  [by Digital Graphic Labs]
-  s_battery_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_battery_18));
+  GFont s_battery_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_battery_18));
 
   
   //Create background
@@ -341,10 +341,6 @@ static void main_window_load(Window *window) {
 }
     
 static void main_window_unload(Window *window) {
-  //Unload GFont
-  fonts_unload_custom_font(s_time_font);
-  fonts_unload_custom_font(s_date_font);
-  fonts_unload_custom_font(s_battery_font);
   
   //Destroy GBitmap
   gbitmap_destroy(s_bg_bitmap);
